@@ -15,7 +15,6 @@ as
     g_directory_name   all_directories.directory_name%type;
     g_file_name        varchar2 (2048);
 
-error
 
     procedure set_handle (p_directory in varchar2)
     is
