@@ -10,10 +10,9 @@
 */
 
 -- OBSERVACIÓN: Este Script sirve para la Instalacion inicial, no tiene
--- grants a terceros. Los GRANTS a terceros se deben incluir en un set 
+-- grants a terceros. Los GRANTS a terceros se debe incluir en un set 
 -- de scripts aparte, generalmente en el directorio GrantsToThirdParties, 
 -- para mantener un correcto Control de Configuración de Fuentes (GIT)
-
 
 ---------------------------------- IMPORTANTE ----------------------------------
 ---------------------------------- IMPORTANTE ----------------------------------
@@ -22,6 +21,7 @@
 -- ambiente NLS_LANG utilizando español y UTF8 o AL32UTF8, por ejemplo:
 --  $ cd <BASE_PROJ>/0200-MPLSQL-Utilities/0100-BD/Schema/TIUTIL_OWN
 --  $ NLS_LANG=SPANISH_CHILE.UTF8 sqlplus system@centos-ora11g @TIUTIL_OWN_Build_All.sql
+--  $ NLS_LANG=SPANISH_CHILE.UTF8 sqlplus system@docker-19c-pdb1-testing @TIUTIL_OWN_Build_All.sql
 
 -- Una vez ejecutado el script se debe validar que el último mensaje
 -- sea "### Finished!!!" Si no se muestra este mensaje quiere decir que hubo
@@ -29,11 +29,6 @@
 -- script para detectar el error.
 
 -------------------------------- FIN IMPORTANTE --------------------------------
-
--- Incluir siempre los 2 scripts con WHENEVER
-WHENEVER SQLERROR EXIT SQL.SQLCODE
-WHENEVER OSERROR EXIT FAILURE
-
 
 col C_SERVICE_NAME new_value V_SERVICE_NAME
 col C_DT new_value V_DT
@@ -45,9 +40,11 @@ from dual;
 spool ./TIUTIL_OWN_Build_All-&V_SERVICE_NAME.-&V_DT..spool.out  
 set echo on
 
+WHENEVER SQLERROR EXIT SQL.SQLCODE
+WHENEVER OSERROR EXIT FAILURE
 
-ALTER SESSION SET NLS_TERRITORY=CHILE;
-ALTER SESSION SET NLS_LANGUAGE=SPANISH;
+alter session set NLS_TERRITORY=CHILE;
+alter session set NLS_LANGUAGE=SPANISH;
 
 
 -- Valida Language and encoding
@@ -59,7 +56,6 @@ DEFINE DROP_OWNER_AND_ROLE='Yes'
 PROMPT ### Owner Roles
 @./Roles/TIUTIL_OWN_DEPLOY_ROL.sql
 @./Roles/TIUTIL_OWN_DEVELOP_ROL.sql
-
 
 PROMPT ### User
 @./Users/TIUTIL_OWN.sql
@@ -87,3 +83,4 @@ spool off
 
 exit
 /
+
